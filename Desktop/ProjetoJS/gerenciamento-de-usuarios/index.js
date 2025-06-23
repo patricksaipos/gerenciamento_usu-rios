@@ -7,7 +7,7 @@ function toast(position, icon, title){
         toast: true,
         position: position,
         showConfirmButton: false,
-        timer: 1500,
+        timer: 60000,
         timerProgressBar: true,
         didOpen: (toast) => {
           toast.onmouseenter = Swal.stopTimer;
@@ -21,6 +21,24 @@ function toast(position, icon, title){
 
 }
 
+function addLine(dataUser) {
+
+    let tbody = document.querySelector(".list-user");
+    let tr = document.createElement("tr");
+    tr.innerHTML = `
+        <td><img src="dist/img/user1-128x128.jpg" alt="User Image" class="img-circle img-sm"></td>
+        <td>${dataUser.name}</td>
+        <td>${dataUser.email}</td>
+        <td>${dataUser.admin}</td>
+        <td>${new Date().toLocaleDateString('pt-BR')}</td>
+        <td>
+            <button type="button" class="btn btn-primary btn-xs btn-flat">Editar</button>
+            <button type="button" class="btn btn-danger btn-xs btn-flat">Excluir</button>
+        </td>
+    `
+    tbody.appendChild(tr);
+}
+
 document.getElementById("form-user-create").addEventListener("submit", event => {
     event.preventDefault();
     fields.forEach((field, index) => {
@@ -31,7 +49,7 @@ document.getElementById("form-user-create").addEventListener("submit", event => 
         }
     })
 
-    toast("top-end", "success", "Usuário Criado com Sucesso")
+    addLine(user)
 
-    console.log(user)
+    toast("top-end", "success", "Usuário Criado com Sucesso")
 })
