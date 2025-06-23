@@ -49,7 +49,18 @@ document.getElementById("form-user-create").addEventListener("submit", event => 
         }
     })
 
-    addLine(user)
+    let objectUser = new User(
+        user.name,
+        user.gender,
+        user.birth,
+        user.country,
+        user.email,
+        user.password,
+        user.photo,
+        user.admim
+    )
+
+    addLine(objectUser)
 
     toast("top-end", "success", "Usuário Criado com Sucesso")
 })
