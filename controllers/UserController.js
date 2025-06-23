@@ -10,12 +10,16 @@ class UserController {
         this.formEl.addEventListener("submit", event => {
             event.preventDefault();
             let values = this.getValues();
-            this.getPhoto((content) => {
-                values.photo = content
-                this.addLine(values, this.tableEl)
+            this.getPhoto().then((result) => {
+                values.photo = result
+                this.addLine(values, this.tableEl);
+                this.clearData();
+            }, (error) => {
+                console.error(error)
             })
             
-            this.toast.success("top-end", "success", "Usuário Criado com Sucesso")
+            this.toast.success("top-end", "success", "Usuário Criado com Sucesso");
+            event.preventDefault();
         })
     }
 
@@ -34,6 +38,14 @@ class UserController {
             </td>
         `
         this.tableEl.appendChild(tr);
+    }
+
+    clearData(){
+        let fields = [...this.formEl];
+
+        fields.forEach((field, index) => {
+            field.value = '';
+        })
     }
 
     getValues(){
@@ -62,22 +74,48 @@ class UserController {
         )
     }
 
-    getPhoto(cb){
-        let fileReader = new FileReader();
+    verifyPhotoGender(){
+        let genderField = [...this.formEl].find(field => field.name === 'gender' && field.checked);
 
-        let photo = [...this.formEl.elements].filter(item => {
-            if (item.name === 'photo'){
-                return item
-            } 
+        if(genderField){
+            if (genderField.value == "M") {
+                return './dist/img/avatar.png'
+            } else {
+                return './dist/img/avatar3.png'
+            }
+        }
+    }
+
+    getPhoto(){
+
+        return new Promise((resolve, reject)=> {
+            let fileReader = new FileReader();
+
+            let photo = [...this.formEl.elements].filter(item => {
+                if (item.name === 'photo'){
+                    return item
+                } 
+            })
+
+            let file = photo[0].files[0];
+
+            if (!file) {
+                file = this.verifyPhotoGender();
+                console.log('fileReader',file)
+                resolve(file)
+            }
+
+            fileReader.onload = () => {
+                resolve(fileReader.result)
+            }
+
+            fileReader.onerror = (e) => {
+                reject(e)
+            }
+
+            fileReader.readAsDataURL(file)
         })
 
-        let file = photo[0].files[0];
-
-        fileReader.onload = () => {
-            cb(fileReader.result)
-        }
-
-        fileReader.readAsDataURL(file)
     }
 
 }

@@ -7,7 +7,7 @@ class Toast {
             toast: true,
             position: position,
             showConfirmButton: false,
-            timer: 60000,
+            timer: 2000,
             timerProgressBar: true,
             didOpen: (toast) => {
               toast.onmouseenter = Swal.stopTimer;
