@@ -9,17 +9,15 @@ class UserController {
     onSubmit(){
         this.formEl.addEventListener("submit", event => {
             event.preventDefault();
+            let btn = this.formEl.querySelector("[type=submit")
+            btn.disabled = true;
             let values = this.getValues();
             console.log('values;',values)
             this.getPhoto().then((result) => {
                 values.photo = result
-                if (values.admin){
-                    values.admin = "Sim"
-                } else {
-                    values.admin = "Não"
-                }
                 this.addLine(values, this.tableEl);
                 this.clearData();
+                btn.disabled = false
             }, (error) => {
                 console.error(error)
             })
@@ -31,13 +29,14 @@ class UserController {
 
     addLine(dataUser, tableEl) {
         // console.log(dataUser)
+        console.log('register',dataUser.register)
         let tr = document.createElement("tr");
         tr.innerHTML = `
             <td><img src="${dataUser.photo}" alt="User Image" class="img-circle img-sm"></td>
             <td>${dataUser.name}</td>
             <td>${dataUser.email}</td>
-            <td>${dataUser.admin}</td>
-            <td>${new Date().toLocaleDateString('pt-BR')}</td>
+            <td>${(dataUser.admin) ? "Sim" : "Não"}</td>
+            <td>${dataUser.register}</td>
             <td>
                 <button type="button" class="btn btn-primary btn-xs btn-flat">Editar</button>
                 <button type="button" class="btn btn-danger btn-xs btn-flat">Excluir</button>
