@@ -10,8 +10,14 @@ class UserController {
         this.formEl.addEventListener("submit", event => {
             event.preventDefault();
             let values = this.getValues();
+            console.log('values;',values)
             this.getPhoto().then((result) => {
                 values.photo = result
+                if (values.admin){
+                    values.admin = "Sim"
+                } else {
+                    values.admin = "Não"
+                }
                 this.addLine(values, this.tableEl);
                 this.clearData();
             }, (error) => {
@@ -24,7 +30,7 @@ class UserController {
     }
 
     addLine(dataUser, tableEl) {
-        console.log(dataUser)
+        // console.log(dataUser)
         let tr = document.createElement("tr");
         tr.innerHTML = `
             <td><img src="${dataUser.photo}" alt="User Image" class="img-circle img-sm"></td>
@@ -40,13 +46,21 @@ class UserController {
         this.tableEl.appendChild(tr);
     }
 
-    clearData(){
+    clearData() {
         let fields = [...this.formEl];
-
-        fields.forEach((field, index) => {
-            field.value = '';
-        })
+    
+        fields.forEach(field => {
+            switch (field.type) {
+                case 'checkbox':
+                case 'radio':
+                    field.checked = false;
+                    break;
+                default:
+                    field.value = '';
+            }
+        });
     }
+    
 
     getValues(){
 
@@ -55,11 +69,21 @@ class UserController {
 
 
         fields.forEach((field, index) => {
-            if (field.name == "gender" && field.checked === false) {
-                user.gender
+            // console.log('field', index, field.value)
+            if (field.name == "gender" && field.checked === true) {
+                console.log('field gender',field.value)
+                user.gender = field.value
             } else {
                 user[field.name] = field.value;
             }
+
+            if (field.name == "admin"){
+                console.log('field.name', field.name)
+                user.admin = field.checked;
+            } else {
+                user[field.name] = field.value
+            }
+
         })
 
         return new User(
@@ -70,7 +94,7 @@ class UserController {
             user.email,
             user.password,
             user.photo,
-            user.admim
+            user.admin
         )
     }
 
@@ -78,11 +102,11 @@ class UserController {
         let genderField = [...this.formEl].find(field => field.name === 'gender' && field.checked);
 
         if(genderField){
-            if (genderField.value == "M") {
+            if (genderField.value == "M") {    
                 return './dist/img/avatar.png'
             } else {
                 return './dist/img/avatar3.png'
-            }
+            } 
         }
     }
 
